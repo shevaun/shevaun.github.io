@@ -13,20 +13,25 @@
 html, body { height: 100%; }
 
 body {
-  background-color: #FFF;
-  font: 13.34px Helvetica, Arial, sans-serif;
+  background-color: #eee;
+  font: 13.34px verdana, Helvetica, Arial, sans-serif;
   font-size: small;
   text-align: center;
+  color: #000051;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-size: 100%; }
+  font-size: 100%;
+}
 
-h1 { margin-bottom: 1em; }
+h1 {
+  font-size: 1.2em;
+  margin-bottom: 1em;
+}
 p { margin: 1em 0; }
 
 a         { color: #00a; }
-a:hover   { color: #000; }
+a:hover   { color: #82b0bf; }
 a:visited { color: #a0a; }
 
 /*****************************************************************************/
@@ -63,36 +68,46 @@ a:visited { color: #a0a; }
   line-height: 1.5em;
 }
 
+
+.header {
+  margin-bottom: 2em;
+  text-align: center;
+ }
+
 .header a {
   font-weight: bold;
   text-decoration: none;
 }
 
 .title {
-  display: inline-block;
-  margin-bottom: 2em;
-}
+  margin-bottom: 0;
+  letter-spacing: -3px;
+ }
 
 .title a {
-  color: #a00;
+  font-size: 30px;
+  color: #000051;
+  border-bottom: 2px solid #82b0bf;
 }
 
 .title a:hover {
-  color: #000;
+  color: #82b0bf;
 }
 
-.header a.extra {
-  color: #aaa;
-  margin-left: 1em;
-}
-
-.header a.extra:hover {
-  color: #000;
-}
+.subtitle {
+  font-family: "Courier New", monospace;
+  font-size: 20px;
+  margin-top: 3px;
+ }
 
 .meta {
-  color: #aaa;
+  color: #82b0bf;
 }
+
+.content {
+  //border-top: 1px solid #82b0bf;
+}
+
 
 .footer {
   font-size: 80%;
@@ -126,6 +141,18 @@ a:visited { color: #a0a; }
 /* Posts
 /*
 /*****************************************************************************/
+
+hr {
+  border: 1px solid #82b0bf;
+}
+
+h2 {
+  font-size: 1.2em;
+}
+
+h3 {
+  margin: 20px 0 10px 0;
+}
 
 /* standard */
 .post pre {
