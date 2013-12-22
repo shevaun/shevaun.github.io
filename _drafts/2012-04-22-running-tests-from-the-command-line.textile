@@ -1,0 +1,28 @@
+---
+layout: post
+title: Running tests from the command line
+enki_id: 7
+categories: ruby, rails, test unit, rspec, testing, command line
+---
+Sometimes you want to be able to isolate a single test and run it independently of any other tests.
+
+h2. Using Test::Unit
+
+h3. Run a single test file
+
+@ruby -I"lib:test" test/unit/file_load_test.rb@
+
+h3. Run a single test within a file
+
+@ruby -I"lib:test" test/unit/file_load_test.rb -n test_should_load_a_gz_file@
+
+h2. Using RSpec
+
+h3. Run a single test file
+
+@rspec spec/models/transmission_outage_spec.rb --format doc@
+
+h3. Run a single test within a file
+
+@rspec spec/models/transmission_outage_spec.rb:56 --format doc@ 
+_(where 56 is the line number of the test to be run)_

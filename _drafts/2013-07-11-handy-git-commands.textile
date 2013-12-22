@@ -1,0 +1,13 @@
+---
+layout: post
+title: Handy git commands
+enki_id: 20
+categories: git
+---
+h3. View commit history for a deleted file
+
+@git log -- path/to/file@
+
+h3. View most recent git commands (useful for undoing commands)
+
+@git reflog@

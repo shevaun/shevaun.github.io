@@ -1,0 +1,25 @@
+---
+layout: post
+title: Handy Rake Migration Tasks
+enki_id: 6
+categories: ruby, rails, rake, migrations
+---
+h3. Run Pending Migrations
+
+@rake db:migrate@
+
+h3. Rollback last migration
+
+@rake db:rollback@
+
+h3. Rollback several migrations
+
+@rake db:rollback STEP=3@
+
+h3. Rerun last/several migrations
+
+@rake db:migrate:redo (STEP=3)@
+
+h3. Recreate the database from scratch
+
+@rake db:drop db:create db:migrate@

@@ -1,0 +1,21 @@
+---
+layout: post
+title: Manually Backing up and Restoring a PostgreSQL Database
+enki_id: 17
+categories: postgresql, pg_dump
+---
+I often find I am creating dumps of data and restoring it to another database, but not frequently enough that I can remember the syntax off the top of my head.
+
+h2. Dump PostgreSQL database to a file
+
+@$ pg_dump -h [db_host] -c [db_name] > /where/to/dump/db_name_dump.sql@
+
+h2. If the database to be restored doesn't already exist, create it
+
+bc. $ psql template1
+CREATE DATABASE [db_name] OWNER [db_owner] ENCODING 'UTF8';
+\q
+
+h2. Restore PostgreSQL database from the dump file
+
+@$ psql -h [db_host] [db_name] < db_name_dump.sql@
