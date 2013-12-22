@@ -2,9 +2,9 @@
 layout: post
 title: Upgrading PostgreSQL from 9.1 to 9.2 on Mac OSX (using Homebrew)
 enki_id: 19
-categories: postgresql, homebrew, mac osx
+tags: postgresql, homebrew, mac osx
 ---
-h2. Steps to upgrade PostgreSQL from 9.1 to 9.2 on Mac OSX using Homebrew
+### Steps to upgrade PostgreSQL from 9.1 to 9.2 on Mac OSX using Homebrew
 
 *Note: If you aren't on version 9.1.2, change step 6 to be your version.*
 
@@ -29,7 +29,7 @@ h2. Steps to upgrade PostgreSQL from 9.1 to 9.2 on Mac OSX using Homebrew
 ## If you're using the launcher: @launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist@
 ## Otherwise: @pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start@
 
-h3. When I tried to connect to my new postgres server with a Rails app, I discovered I didn't have the socket directory that the rails apps use to connect to postgres:
+#### When I tried to connect to my new postgres server with a Rails app, I discovered I didn't have the socket directory that the rails apps use to connect to postgres:
 
 # @vi /usr/local/var/postgres/postgresql.conf@
 # change @unix_socket_directory = '/var/pgsql_socket'@
@@ -37,20 +37,22 @@ h3. When I tried to connect to my new postgres server with a Rails app, I discov
 # @pg_ctl -D /usr/local/var/postgres stop -s -m fast@ (or unload launcher)
 # @pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start@ (or load launcher)
 
-h3. Upgrading Postgis databases (instructions by Joseph Leniston):
+#### Upgrading Postgis databases (instructions by Joseph Leniston):
 
 If you are using an earlier version of PostGIS e.g. 1.5 and are upgrading to 2.0.x then you can either do a HARD UPGRADE see http://postgis.refractions.net/documentation/manual-2.0/postgis_installation.html#hard_upgrade or you can simply drop your DB and start again withe new version from an updated template:
 
 Assuming your database.yml looks like this:
 
-bc. development:
+{% highlight bash %}
+development:
 adapter: postgresql
 encoding: unicode
-database: 
+database:
 schema_search_path: public
 template: template_postgis
 host: localhost
 port: 5432
+{% endhighlight %}
 
 # Remove old postgres scripts
 ## @psql -d template_postgis < /usr/local/Cellar/postgis15/1.5.8/share/postgis/uninstall_postgis.sql@
@@ -58,7 +60,8 @@ port: 5432
 ## @psql -d template_postgis@
 # Install PostGIS (your file paths may vary)
 
-bc. CREATE EXTENSION postgis;
+{% highlight bash %}
+CREATE EXTENSION postgis;
 CREATE EXTENSION postgis_topology;
 GRANT ALL ON geometry_columns TO PUBLIC;
 GRANT ALL ON geography_columns TO PUBLIC;
@@ -68,6 +71,9 @@ GRANT ALL ON spatial_ref_sys TO PUBLIC;
 -- problems.
 VACUUM FREEZE;
 SELECT PostGIS_full_version(); --should be new version e.g. 2.0.3
+{% endhighlight %}
 
-bc. rake db:drop
+{% highlight bash %}
+rake db:drop
 rake db:create
+{% endhighlight %}

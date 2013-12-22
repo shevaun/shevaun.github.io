@@ -2,7 +2,7 @@
 layout: post
 title: Grep archived logs and sort the results
 enki_id: 11
-categories: grep, logrotate, bash
+tags: grep, logrotate, bash
 ---
 Recently I needed to search through our production logs for a request that was a few days old and had been archived by logrotate.
 I found this command line script to easily search all the logs in the log directory and view the most recent results first:

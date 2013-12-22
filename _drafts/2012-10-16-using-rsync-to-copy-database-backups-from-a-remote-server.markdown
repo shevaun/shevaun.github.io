@@ -2,31 +2,35 @@
 layout: post
 title: Using Rsync to copy database backups from a remote server
 enki_id: 13
-categories: rsync, crontab, backups
+tags: rsync, crontab, backups
 ---
 I create daily backups of this blog's database, but since they are stored on the same server as my application, they won't be much good if the whole server dies.
 
 I wrote a small script to rsync my database backups onto my MacBook Air, which gets routinely backed up onto an external hard drive with Time Machine.
 
-h2. Create script to rsync backup directory
+### Create script to rsync backup directory
 
 @$ vi ~/scripts/rsync-livetocode-backups@
 
-bc. #!/bin/bash
+{% highlight bash %}
+#!/bin/bash
 rsync -rv shevaun@livetocode:/var/backups/postgres ~/backups/livetocode
+{% endhighlight %}
 
-h3. Make the script executable
+#### Make the script executable
 
 @$ chmod +x ~/scripts/rsync-livetocode-backups@
 
-h2. Write cron task to run the script daily
+### Write cron task to run the script daily
 
 @$ crontab -e@
 
-bc. # m  h  dom mon dow user command
+{% highlight bash %}
+# m  h  dom mon dow user command
 0 12  *   *   *  * ~/scripts/rsync-livetocode-backups
+{% endhighlight %}
 
-h3. View the cron task to make sure it saved correctly
+#### View the cron task to make sure it saved correctly
 
 @$ crontab -l@
 
