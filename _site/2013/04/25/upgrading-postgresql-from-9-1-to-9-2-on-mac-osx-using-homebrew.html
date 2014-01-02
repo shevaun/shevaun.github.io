@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Upgrading PostgreSQL from 9.1 to 9.2 on Mac OSX</title>
+    <meta name="viewport" content="width=device-width">
+
+    <!-- syntax highlighting CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="site">
+    <div class="header">
+      <h1 class="title"><a href="/">Live to Code</a></h1>
+      <h2 class="subtitle">code to live</h2>
+    </div>
+
+    <div class="content">
+      <h2>Upgrading PostgreSQL from 9.1 to 9.2 on Mac OSX</h2>
+<hr>
+<p class="meta">25 Apr 2013 | <a href="/tag/postgresql.html" rel="tag">postgresql</a>, <a href="/tag/homebrew.html" rel="tag">homebrew</a>, <a href="/tag/mac.html" rel="tag">mac</a>, <a href="/tag/osx.html" rel="tag">osx</a></p>
+<div class="post">
+<h2>Steps to upgrade PostgreSQL from 9.1 to 9.2 on Mac OSX using Homebrew</h2>
+
+<p><em>Note: If you aren&#39;t on version 9.1.2, change step 5 to be your version.</em></p>
+
+<h3>1. Stop your postgres server</h3>
+
+<p>If you&#39;re using the launcher:</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
+</code></pre></div>
+<p>otherwise:</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres stop -s -m fast
+</code></pre></div>
+<h3>2. Move your existing installation</h3>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>mv /usr/local/var/postgres /usr/local/var/postgres91
+</code></pre></div>
+<h3>3. Download &amp; upgrade the 9.2 formula</h3>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>curl https://raw.github.com/fragility/homebrew/737af01178590950749cf5e841f2d086c57<span class="se">\</span>
+         c5a80/Library/Formula/postgresql.rb &gt; /usr/local/Library/Formula/postgresql.rb
+<span class="nv">$ </span>brew upgrade postgresql
+<span class="nv">$ </span>initdb /usr/local/var/postgres -E utf8
+</code></pre></div>
+<h3>4. If you have the postgis library installed, do the following</h3>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>brew uninstall postgis
+<span class="nv">$ </span>brew tap homebrew/versions
+<span class="nv">$ </span>brew edit postgis15
+</code></pre></div>
+<p>replace all instances of <code>postgresql9</code> with <code>postgresql</code></p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>brew install postgis15
+</code></pre></div>
+<h3>5. Upgrade your databases</h3>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>pg_upgrade -b /usr/local/Cellar/postgresql/9.1.2/bin -B <span class="se">\</span>
+    /usr/local/Cellar/postgresql/9.2.0/bin -d /usr/local/var/postgres91 -D <span class="se">\</span>
+    /usr/local/var/postgres
+</code></pre></div>
+<h3>6. Start the postgres server</h3>
+
+<p>If you&#39;re using the launcher:</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
+</code></pre></div>
+<p>Otherwise:</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+</code></pre></div>
+<p>That should be all you need to do to upgrade Postgres, but keep reading if you&#39;re still having issues.</p>
+
+<h2>Other issues you might encounter</h2>
+
+<h3>Missing socket directory</h3>
+
+<p>When I tried to connect to my new postgres server with a Rails app, I discovered I didn&#39;t have the socket directory that the rails apps use to connect to postgres.</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>vi /usr/local/var/postgres/postgresql.conf
+</code></pre></div>
+<p>change <code>unix_socket_directory = &#39;/var/pgsql_socket&#39;</code></p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>mkdir /var/pgsql_socket
+</code></pre></div>
+<p>(and chown/chmod as necessary)</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="c"># or unload launcher</span>
+<span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres stop -s -m fast
+<span class="c"># or load launcher</span>
+<span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+</code></pre></div>
+<h3>Upgrade Postgis databases from 1.5 to 2.0</h3>
+
+<p>(instructions by Joseph Leniston)</p>
+
+<p>If you are using an earlier version of PostGIS e.g. 1.5 and are upgrading to 2.0.x then you can either do a <a href="http://postgis.refractions.net/documentation/manual-2.0/postgis_installation.html#hard_upgrade">HARD UPGRADE</a> or you can simply drop your DB and start again with the new version from an updated template:</p>
+
+<p>Assuming your database.yml looks like this:</p>
+<div class="highlight"><pre><code class="yaml language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">development</span><span class="p-Indicator">:</span>
+<span class="l-Scalar-Plain">adapter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">postgresql</span>
+<span class="l-Scalar-Plain">encoding</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">unicode</span>
+<span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span>
+<span class="l-Scalar-Plain">schema_search_path</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">public</span>
+<span class="l-Scalar-Plain">template</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">template_postgis</span>
+<span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">localhost</span>
+<span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5432</span>
+</code></pre></div>
+<ol>
+<li><p>Remove old postgres scripts</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>psql -d template_postgis &lt; <span class="se">\</span>
+    /usr/local/Cellar/postgis15/1.5.8/share/postgis/uninstall_postgis.sql
+</code></pre></div></li>
+<li><p>Connect to new database</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>psql -d template_postgis
+</code></pre></div></li>
+<li><p>Install PostGIS (your file paths may vary)</p>
+<div class="highlight"><pre><code class="postgres language-postgres" data-lang="postgres"><span class="k">CREATE</span> <span class="k">EXTENSION</span> <span class="n">postgis</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">EXTENSION</span> <span class="n">postgis_topology</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">ON</span> <span class="n">geometry_columns</span> <span class="k">TO</span> <span class="n">PUBLIC</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">ON</span> <span class="n">geography_columns</span> <span class="k">TO</span> <span class="n">PUBLIC</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">ON</span> <span class="n">spatial_ref_sys</span> <span class="k">TO</span> <span class="n">PUBLIC</span><span class="p">;</span>
+<span class="c1">-- vacuum freeze: it will guarantee that all rows in the database are</span>
+<span class="c1">-- &quot;frozen&quot; and will not be subject to transaction ID wraparound</span>
+<span class="c1">-- problems.</span>
+<span class="k">VACUUM</span> <span class="k">FREEZE</span><span class="p">;</span>
+<span class="k">SELECT</span> <span class="n">PostGIS_full_version</span><span class="p">();</span> <span class="c1">--should be new version e.g. 2.0.3</span>
+</code></pre></div></li>
+<li><p>Recreate database</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>rake db:drop
+<span class="nv">$ </span>rake db:create
+</code></pre></div></li>
+</ol>
+
+</div>
+
+    </div>
+
+    <div id="tag-cloud" class="sidebar">
+  <h2>Tags</h2>
+  <hr>
+  <a href="/tag/asset-pipeline.html" class="set-1">asset-pipeline</a> <a href="/tag/backups.html" class="set-1">backups</a> <a href="/tag/bash.html" class="set-1">bash</a> <a href="/tag/capistrano.html" class="set-1">capistrano</a> <a href="/tag/cat.html" class="set-1">cat</a> <a href="/tag/clearance.html" class="set-1">clearance</a> <a href="/tag/command-line.html" class="set-1">command-line</a> <a href="/tag/cookies.html" class="set-1">cookies</a> <a href="/tag/cron.html" class="set-1">cron</a> <a href="/tag/debugging.html" class="set-1">debugging</a> <a href="/tag/dos2unix.html" class="set-1">dos2unix</a> <a href="/tag/factory_girl.html" class="set-1">factory_girl</a> <a href="/tag/gems.html" class="set-1">gems</a> <a href="/tag/git.html" class="set-2">git</a> <a href="/tag/grep.html" class="set-1">grep</a> <a href="/tag/guard.html" class="set-1">guard</a> <a href="/tag/homebrew.html" class="set-1">homebrew</a> <a href="/tag/https.html" class="set-1">https</a> <a href="/tag/keycutter.html" class="set-1">keycutter</a> <a href="/tag/linux.html" class="set-1">linux</a> <a href="/tag/logrotate.html" class="set-1">logrotate</a> <a href="/tag/mac.html" class="set-1">mac</a> <a href="/tag/migrations.html" class="set-1">migrations</a> <a href="/tag/osx.html" class="set-1">osx</a> <a href="/tag/pg_dump.html" class="set-1">pg_dump</a> <a href="/tag/postgresql.html" class="set-3">postgresql</a> <a href="/tag/pow.html" class="set-1">pow</a> <a href="/tag/pry.html" class="set-1">pry</a> <a href="/tag/pry-remote.html" class="set-1">pry-remote</a> <a href="/tag/rails.html" class="set-5">rails</a> <a href="/tag/rake.html" class="set-1">rake</a> <a href="/tag/routes.html" class="set-1">routes</a> <a href="/tag/rspec.html" class="set-2">rspec</a> <a href="/tag/rsync.html" class="set-1">rsync</a> <a href="/tag/ruby.html" class="set-2">ruby</a> <a href="/tag/spork.html" class="set-1">spork</a> <a href="/tag/ssl.html" class="set-1">ssl</a> <a href="/tag/stud.html" class="set-1">stud</a> <a href="/tag/sub-uri.html" class="set-1">sub-uri</a> <a href="/tag/tdd.html" class="set-1">tdd</a> <a href="/tag/test-unit.html" class="set-1">test-unit</a> <a href="/tag/testing.html" class="set-2">testing</a> <a href="/tag/ubuntu.html" class="set-1">ubuntu</a> <a href="/tag/varnish.html" class="set-1">varnish</a>
+</div>
+
+    <div class="footer">
+      <div class="contact">
+	<p>
+	  Shevaun Coker<br />
+	  Web Developer<br />
+	</p>
+      </div>
+      <div class="contact">
+	<p>
+	<a href="https://github.com/shevaun">github.com/shevaun</a><br />
+	<a href="https://twitter.com/shevauncoker">twitter.com/shevauncoker</a><br />
+	</p>
+      </div>
+      </div>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Git Workflow Cheatsheet</title>
+    <meta name="viewport" content="width=device-width">
+
+    <!-- syntax highlighting CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="site">
+    <div class="header">
+      <h1 class="title"><a href="/">Live to Code</a></h1>
+      <h2 class="subtitle">code to live</h2>
+    </div>
+
+    <div class="content">
+      <h2>Git Workflow Cheatsheet</h2>
+<hr>
+<p class="meta">18 Mar 2012 | <a href="/tag/git.html" rel="tag">git</a></p>
+<div class="post">
+<h3>Creating a new branch</h3>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>git checkout -b branch_name    <span class="c"># create new local branch and switch to it</span>
+<span class="nv">$ </span>git commit -am                 <span class="c"># commit changes</span>
+<span class="nv">$ </span>git push -u origin branch_name <span class="c"># push branch to remote repo and track it</span>
+</code></pre></div>
+
+<h3>Working on someone else&#39;s branch</h3>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>git fetch                      <span class="c"># pull new branches down</span>
+<span class="nv">$ </span>git checkout branch_name
+</code></pre></div>
+
+<h3>Merging a feature branch into master</h3>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>git checkout master
+<span class="nv">$ </span>git merge --no-ff branch_name  <span class="c"># merge branch into master with a new commit</span>
+<span class="nv">$ </span>git push origin :branch_name   <span class="c"># delete the remote branch</span>
+<span class="nv">$ </span>git branch -d branch_name      <span class="c"># delete the local branch</span>
+</code></pre></div>
+
+<h3>oh-my-zsh aliases</h3>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">gst</span><span class="o">=</span><span class="s1">&#39;git status&#39;</span>
+<span class="nv">gl</span><span class="o">=</span><span class="s1">&#39;git pull&#39;</span>
+<span class="nv">gup</span><span class="o">=</span><span class="s1">&#39;git fetch &amp;&amp; git rebase&#39;</span>
+<span class="nv">gp</span><span class="o">=</span><span class="s1">&#39;git push&#39;</span>
+<span class="nv">gc</span><span class="o">=</span><span class="s1">&#39;git commit -v&#39;</span>
+<span class="nv">gca</span><span class="o">=</span><span class="s1">&#39;git commit -v -a&#39;</span>
+<span class="nv">gco</span><span class="o">=</span><span class="s1">&#39;git checkout&#39;</span>
+<span class="nv">gcm</span><span class="o">=</span><span class="s1">&#39;git checkout master&#39;</span>
+<span class="nv">gb</span><span class="o">=</span><span class="s1">&#39;git branch&#39;</span>
+<span class="nv">gba</span><span class="o">=</span><span class="s1">&#39;git branch -a&#39;</span>
+<span class="nv">gcount</span><span class="o">=</span><span class="s1">&#39;git shortlog -sn&#39;</span>
+<span class="nv">gcp</span><span class="o">=</span><span class="s1">&#39;git cherry-pick&#39;</span>
+<span class="nv">glg</span><span class="o">=</span><span class="s1">&#39;git log —stat —max-count=5&#39;</span>
+<span class="nv">glgg</span><span class="o">=</span><span class="s1">&#39;git log —graph —max-count=5&#39;</span>
+<span class="nv">gss</span><span class="o">=</span><span class="s1">&#39;git status -s&#39;</span>
+<span class="nv">ga</span><span class="o">=</span><span class="s1">&#39;git add&#39;</span>
+<span class="nv">gm</span><span class="o">=</span><span class="s1">&#39;git merge&#39;</span>
+<span class="nv">grh</span><span class="o">=</span><span class="s1">&#39;git reset HEAD&#39;</span>
+<span class="nv">grhh</span><span class="o">=</span><span class="s1">&#39;git reset HEAD —hard&#39;</span>
+<span class="nv">ggpull</span><span class="o">=</span><span class="s1">&#39;git pull origin $(current_branch)&#39;</span>
+<span class="nv">ggpush</span><span class="o">=</span><span class="s1">&#39;git push origin $(current_branch)&#39;</span>
+<span class="nv">ggpnp</span><span class="o">=</span><span class="s1">&#39;git pull origin $(current_branch) &amp;&amp; git push origin $(current_branch)&#39;</span>
+</code></pre></div>
+
+</div>
+
+    </div>
+
+    <div id="tag-cloud" class="sidebar">
+  <h2>Tags</h2>
+  <hr>
+  <a href="/tag/asset-pipeline.html" class="set-1">asset-pipeline</a> <a href="/tag/backups.html" class="set-1">backups</a> <a href="/tag/bash.html" class="set-1">bash</a> <a href="/tag/capistrano.html" class="set-1">capistrano</a> <a href="/tag/cat.html" class="set-1">cat</a> <a href="/tag/clearance.html" class="set-1">clearance</a> <a href="/tag/command-line.html" class="set-1">command-line</a> <a href="/tag/cookies.html" class="set-1">cookies</a> <a href="/tag/cron.html" class="set-1">cron</a> <a href="/tag/debugging.html" class="set-1">debugging</a> <a href="/tag/dos2unix.html" class="set-1">dos2unix</a> <a href="/tag/factory_girl.html" class="set-1">factory_girl</a> <a href="/tag/gems.html" class="set-1">gems</a> <a href="/tag/git.html" class="set-2">git</a> <a href="/tag/grep.html" class="set-1">grep</a> <a href="/tag/guard.html" class="set-1">guard</a> <a href="/tag/homebrew.html" class="set-1">homebrew</a> <a href="/tag/https.html" class="set-1">https</a> <a href="/tag/keycutter.html" class="set-1">keycutter</a> <a href="/tag/linux.html" class="set-1">linux</a> <a href="/tag/logrotate.html" class="set-1">logrotate</a> <a href="/tag/mac.html" class="set-1">mac</a> <a href="/tag/migrations.html" class="set-1">migrations</a> <a href="/tag/osx.html" class="set-1">osx</a> <a href="/tag/pg_dump.html" class="set-1">pg_dump</a> <a href="/tag/postgresql.html" class="set-3">postgresql</a> <a href="/tag/pow.html" class="set-1">pow</a> <a href="/tag/pry.html" class="set-1">pry</a> <a href="/tag/pry-remote.html" class="set-1">pry-remote</a> <a href="/tag/rails.html" class="set-5">rails</a> <a href="/tag/rake.html" class="set-1">rake</a> <a href="/tag/routes.html" class="set-1">routes</a> <a href="/tag/rspec.html" class="set-2">rspec</a> <a href="/tag/rsync.html" class="set-1">rsync</a> <a href="/tag/ruby.html" class="set-2">ruby</a> <a href="/tag/spork.html" class="set-1">spork</a> <a href="/tag/ssl.html" class="set-1">ssl</a> <a href="/tag/stud.html" class="set-1">stud</a> <a href="/tag/sub-uri.html" class="set-1">sub-uri</a> <a href="/tag/tdd.html" class="set-1">tdd</a> <a href="/tag/test-unit.html" class="set-1">test-unit</a> <a href="/tag/testing.html" class="set-2">testing</a> <a href="/tag/ubuntu.html" class="set-1">ubuntu</a> <a href="/tag/varnish.html" class="set-1">varnish</a>
+</div>
+
+    <div class="footer">
+      <div class="contact">
+	<p>
+	  Shevaun Coker<br />
+	  Web Developer<br />
+	</p>
+      </div>
+      <div class="contact">
+	<p>
+	<a href="https://github.com/shevaun">github.com/shevaun</a><br />
+	<a href="https://twitter.com/shevauncoker">twitter.com/shevauncoker</a><br />
+	</p>
+      </div>
+      </div>
+      </div>
+  </body>
+</html>

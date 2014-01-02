@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Faster TDD with Spork, Guard & Test::Unit</title>
+    <meta name="viewport" content="width=device-width">
+
+    <!-- syntax highlighting CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="site">
+    <div class="header">
+      <h1 class="title"><a href="/">Live to Code</a></h1>
+      <h2 class="subtitle">code to live</h2>
+    </div>
+
+    <div class="content">
+      <h2>Faster TDD with Spork, Guard & Test::Unit</h2>
+<hr>
+<p class="meta">05 Apr 2012 | <a href="/tag/rails.html" rel="tag">rails</a>, <a href="/tag/guard.html" rel="tag">guard</a>, <a href="/tag/spork.html" rel="tag">spork</a>, <a href="/tag/test-unit.html" rel="tag">test-unit</a>, <a href="/tag/tdd.html" rel="tag">tdd</a>, <a href="/tag/testing.html" rel="tag">testing</a></p>
+<div class="post">
+<p>Using <a href="https://github.com/sporkrb/spork">spork</a> and <a href="https://github.com/guard/guard">guard</a> together is a great way to speed up the test feedback cycle. Having minimum latency between code changes and test output is a great productivity booster, and is especially useful for certain tasks such as Test Driven Development, fixing bugs or refactoring code.</p>
+
+<p>Follow these steps to set up Spork &amp; Guard in your Rails app with Test::Unit (steps can be easily adapted for RSpec).</p>
+
+<h3>1. Add the following gems to your Gemfile</h3>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="ss">:test</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;spork-testunit&#39;</span>   <span class="c1"># runs Test::Unit with spork</span>
+  <span class="n">gem</span> <span class="s1">&#39;guard-spork&#39;</span>      <span class="c1"># runs spork with guard</span>
+  <span class="n">gem</span> <span class="s1">&#39;guard-test&#39;</span>       <span class="c1"># runs Test::Unit with guard</span>
+<span class="k">end</span>
+</code></pre></div>
+
+<h3>2. Install and bootstrap guard and spork</h3>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>bundle install
+<span class="nv">$ </span>spork --bootstrap
+<span class="nv">$ </span>guard init spork
+<span class="nv">$ </span>guard init <span class="nb">test</span>
+</code></pre></div>
+
+<h3>3. Edit your Guardfile (in Rails.root)</h3>
+
+<p><strong>Note:</strong> The spork section needs to be above any other test sections in your Guardfile, because they are loaded in the order they are specified.</p>
+
+<p>Add or remove watch expressions as you need to (see the <a href="https://github.com/guard/guard">guard docs</a> for usage), but don&#39;t forget to add the <code>:test_unit_env =&gt; {&#39;RAILS_ENV&#39; =&gt; &#39;test&#39;}</code> option to the spork section and the <code>:drb =&gt; true</code> option to the test section.</p>
+
+<h4>Example Guardfile:</h4>
+
+<div class="highlight"><pre><code class="ruby"> <span class="n">guard</span> <span class="s1">&#39;spork&#39;</span><span class="p">,</span> <span class="ss">:test_unit_env</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s1">&#39;RAILS_ENV&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;test&#39;</span> <span class="p">},</span> <span class="ss">:wait</span> <span class="o">=&gt;</span> <span class="mi">60</span> <span class="k">do</span>
+  <span class="n">watch</span><span class="p">(</span><span class="s1">&#39;config/application.rb&#39;</span><span class="p">)</span>
+  <span class="n">watch</span><span class="p">(</span><span class="s1">&#39;config/environment.rb&#39;</span><span class="p">)</span>
+  <span class="n">watch</span><span class="p">(</span><span class="sr">%r{^config/environments/.+\.rb$}</span><span class="p">)</span>
+  <span class="n">watch</span><span class="p">(</span><span class="sr">%r{^config/initializers/.+\.rb$}</span><span class="p">)</span>
+  <span class="n">watch</span><span class="p">(</span><span class="s1">&#39;Gemfile&#39;</span><span class="p">)</span>
+  <span class="n">watch</span><span class="p">(</span><span class="s1">&#39;Gemfile.lock&#39;</span><span class="p">)</span>
+  <span class="n">watch</span><span class="p">(</span><span class="s1">&#39;test/test_helper.rb&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="ss">:test_unit</span> <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="n">guard</span> <span class="ss">:test</span><span class="p">,</span> <span class="ss">:drb</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span> <span class="ss">:cli</span> <span class="o">=&gt;</span> <span class="s1">&#39;--use-color=true&#39;</span> <span class="k">do</span>
+  <span class="n">watch</span><span class="p">(</span><span class="sr">%r{^lib/(.+)\.rb$}</span><span class="p">)</span>     <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;test/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_test.rb&quot;</span> <span class="p">}</span>
+  <span class="n">watch</span><span class="p">(</span><span class="sr">%r{^test/.+_test\.rb$}</span><span class="p">)</span>
+  <span class="n">watch</span><span class="p">(</span><span class="s1">&#39;test/test_helper.rb&#39;</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">&quot;test&quot;</span> <span class="p">}</span>
+
+  <span class="c1"># Rails example</span>
+  <span class="n">watch</span><span class="p">(</span><span class="sr">%r{^app/models/(.+)\.rb$}</span><span class="p">)</span>    <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;test/unit/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_test.rb&quot;</span> <span class="p">}</span>
+  <span class="n">watch</span><span class="p">(</span><span class="sr">%r{^app/controllers/(.+)\.rb$}</span><span class="p">)</span>  <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;test/functional/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_test.rb&quot;</span> <span class="p">}</span>
+  <span class="n">watch</span><span class="p">(</span><span class="sr">%r{^app/views/(.+)/.+\.erb$}</span><span class="p">)</span>
+                               <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;test/functional/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_controller_test.rb&quot;</span> <span class="p">}</span>
+  <span class="n">watch</span><span class="p">(</span><span class="s1">&#39;app/controllers/application_controller.rb&#39;</span><span class="p">)</span>
+                                        <span class="p">{</span> <span class="o">[</span><span class="s2">&quot;test/functional&quot;</span><span class="p">,</span> <span class="s2">&quot;test/integration&quot;</span><span class="o">]</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div>
+
+<h3>4. Edit your test/test_helper.rb</h3>
+
+<p><code>spork --bootstrap</code> will have added <code>Spork.prefork</code> and a <code>Spork.each_run</code> blocks to your <code>test_helper.rb</code>. Read the instructions and move all your code in <code>test_helper</code> into one of these blocks.
+The more code you move to <code>Spork.prefork</code> the faster your tests will run.</p>
+
+<p><strong>Note:</strong> Having the line <code>fixtures :all</code> in your prefork block will load all your model classes (if they have fixtures) so be aware that changes to these classes will not be picked up until you reload spork. One way around this is to remove the <code>fixtures :all</code> line and instead require the fixtures you need in each test.</p>
+
+<h4>Example test_helper.rb:</h4>
+
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;spork&#39;</span>
+
+<span class="no">Spork</span><span class="o">.</span><span class="n">prefork</span> <span class="k">do</span>
+  <span class="c1"># Loading more in this block will cause your tests to run faster. However,</span>
+  <span class="c1"># if you change any configuration or code from libraries loaded here, you&#39;ll</span>
+  <span class="c1"># need to restart spork for it take effect.</span>
+
+  <span class="c1"># You typically want to place most of your (slow) initializer code in here, in</span>
+  <span class="c1"># particular, require&#39;ing any 3rd-party gems that you don&#39;t normally modify</span>
+  <span class="c1"># during development.</span>
+
+  <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;RAILS_ENV&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+  <span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../config/environment&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+  <span class="nb">require</span> <span class="s1">&#39;rails/test_help&#39;</span>
+
+  <span class="k">class</span> <span class="nc">ActiveSupport</span><span class="o">::</span><span class="no">TestCase</span>
+    <span class="n">fixtures</span> <span class="ss">:all</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Spork</span><span class="o">.</span><span class="n">each_run</span> <span class="k">do</span>
+  <span class="c1"># The Spork.each_run block is run each time you run your specs.  In case you</span>
+  <span class="c1"># need to load files that tend to change during development, require them here.</span>
+  <span class="c1"># With Rails, your application modules are loaded automatically, so sometimes</span>
+  <span class="c1"># this block can remain empty.</span>
+
+  <span class="c1"># Note: You can modify files loaded *from* the Spork.each_run block without</span>
+  <span class="c1"># restarting the spork server.  However, this file itself will not be reloaded,</span>
+  <span class="c1"># so if you change any of the code inside the each_run block, you still need to</span>
+  <span class="c1"># restart the server.  In general, if you have non-trivial code in this file,</span>
+  <span class="c1"># it&#39;s advisable to move it into a separate file so you can easily edit it</span>
+  <span class="c1"># without restarting spork.</span>
+<span class="k">end</span>
+</code></pre></div>
+
+<h3>5. Start up Guard</h3>
+
+<p>Now you&#39;re all ready to go. Run:</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>guard
+</code></pre></div>
+
+<p>to start up an instance of guard which will boot up spork and run all of your tests.</p>
+
+<p>Now as soon as you make changes to any watched files, the relevant tests will run, super fast!</p>
+
+<h4>Guard tips and tricks</h4>
+
+<ul>
+<li>To run all of your tests, hit &#39;return&#39; in the terminal running guard.</li>
+<li>To pause guard, type &#39;p&#39; (hit &#39;return&#39; to resume).</li>
+</ul>
+
+</div>
+
+    </div>
+
+    <div id="tag-cloud" class="sidebar">
+  <h2>Tags</h2>
+  <hr>
+  <a href="/tag/asset-pipeline.html" class="set-1">asset-pipeline</a> <a href="/tag/backups.html" class="set-1">backups</a> <a href="/tag/bash.html" class="set-1">bash</a> <a href="/tag/capistrano.html" class="set-1">capistrano</a> <a href="/tag/cat.html" class="set-1">cat</a> <a href="/tag/clearance.html" class="set-1">clearance</a> <a href="/tag/command-line.html" class="set-1">command-line</a> <a href="/tag/cookies.html" class="set-1">cookies</a> <a href="/tag/cron.html" class="set-1">cron</a> <a href="/tag/debugging.html" class="set-1">debugging</a> <a href="/tag/dos2unix.html" class="set-1">dos2unix</a> <a href="/tag/factory_girl.html" class="set-1">factory_girl</a> <a href="/tag/gems.html" class="set-1">gems</a> <a href="/tag/git.html" class="set-2">git</a> <a href="/tag/grep.html" class="set-1">grep</a> <a href="/tag/guard.html" class="set-1">guard</a> <a href="/tag/homebrew.html" class="set-1">homebrew</a> <a href="/tag/https.html" class="set-1">https</a> <a href="/tag/keycutter.html" class="set-1">keycutter</a> <a href="/tag/linux.html" class="set-1">linux</a> <a href="/tag/logrotate.html" class="set-1">logrotate</a> <a href="/tag/mac.html" class="set-1">mac</a> <a href="/tag/migrations.html" class="set-1">migrations</a> <a href="/tag/osx.html" class="set-1">osx</a> <a href="/tag/pg_dump.html" class="set-1">pg_dump</a> <a href="/tag/postgresql.html" class="set-3">postgresql</a> <a href="/tag/pow.html" class="set-1">pow</a> <a href="/tag/pry.html" class="set-1">pry</a> <a href="/tag/pry-remote.html" class="set-1">pry-remote</a> <a href="/tag/rails.html" class="set-5">rails</a> <a href="/tag/rake.html" class="set-1">rake</a> <a href="/tag/routes.html" class="set-1">routes</a> <a href="/tag/rspec.html" class="set-2">rspec</a> <a href="/tag/rsync.html" class="set-1">rsync</a> <a href="/tag/ruby.html" class="set-2">ruby</a> <a href="/tag/spork.html" class="set-1">spork</a> <a href="/tag/ssl.html" class="set-1">ssl</a> <a href="/tag/stud.html" class="set-1">stud</a> <a href="/tag/sub-uri.html" class="set-1">sub-uri</a> <a href="/tag/tdd.html" class="set-1">tdd</a> <a href="/tag/test-unit.html" class="set-1">test-unit</a> <a href="/tag/testing.html" class="set-2">testing</a> <a href="/tag/ubuntu.html" class="set-1">ubuntu</a> <a href="/tag/varnish.html" class="set-1">varnish</a>
+</div>
+
+    <div class="footer">
+      <div class="contact">
+	<p>
+	  Shevaun Coker<br />
+	  Web Developer<br />
+	</p>
+      </div>
+      <div class="contact">
+	<p>
+	<a href="https://github.com/shevaun">github.com/shevaun</a><br />
+	<a href="https://twitter.com/shevauncoker">twitter.com/shevauncoker</a><br />
+	</p>
+      </div>
+      </div>
+      </div>
+  </body>
+</html>

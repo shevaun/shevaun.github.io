@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Clearance, Varnish and Rails: An Exercise in Bug Stalking</title>
+    <meta name="viewport" content="width=device-width">
+
+    <!-- syntax highlighting CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="site">
+    <div class="header">
+      <h1 class="title"><a href="/">Live to Code</a></h1>
+      <h2 class="subtitle">code to live</h2>
+    </div>
+
+    <div class="content">
+      <h2>Clearance, Varnish and Rails: An Exercise in Bug Stalking</h2>
+<hr>
+<p class="meta">08 Sep 2013 | <a href="/tag/rails.html" rel="tag">rails</a>, <a href="/tag/varnish.html" rel="tag">varnish</a>, <a href="/tag/clearance.html" rel="tag">clearance</a>, <a href="/tag/cookies.html" rel="tag">cookies</a></p>
+<div class="post">
+<h3>The Background</h3>
+
+<p>I was working on upgrading a large Rails application that has a public facing side and an authenticated side (for administrators to update content etc). As a precursor to the Rails upgrade, I upgraded the Clearance gem (used for authentication) from version 0.16 to 1.0.</p>
+
+<h3>The Issue</h3>
+
+<p>Soon after the Clearance upgrade code was pushed to production, users started complaining about getting logged out (causing them to lose what they were working on).
+Seemingly at random (sometimes from clicking a link, sometimes after submitting a form, but other time both actions worked perfectly), authenticated users were being redirected to the login page. The change was quickly rolled back and everything returned to normal; meanwhile I started to investigate what went wrong.</p>
+
+<h3>The Investigation</h3>
+
+<p>The first thing I tried to do was to reproduce the issue locally. Unfortunately, I could not. I booted up a bunch of different web servers, matched my development environment as close to production as possible and attempted to replicate every action the users normally take, but failed to get logged out while authenticated.</p>
+
+<p>Undeterred, I trawled through the Clearance docs and github issues, and studied the diff between version 0.16 and 1.0 line by line trying to find something that could cause or explain &#39;random&#39; authentication failure. Nothing jumped out at me.</p>
+
+<p>Just in case, I double checked all the obvious Rails gotchas: CSRF tokens, ajax requests, and cookie and session settings but found nothing amiss.</p>
+
+<p>I also looked at the Varnish config, but it was set up to only cache the public facing pages and allow authenticated requests to pass through to Rails.</p>
+
+<p>The fact that the issue was occurring randomly kept making me think that it must be something more than a bug in Clearance or in the Rails production environment.</p>
+
+<p>I needed more information about the circumstances, so my client deployed the buggy code to Production again for an hour and afterwards I studied the logs bit by bit.</p>
+
+<p>Pretty soon a recurring request grabbed my attention: an ajax request that is sent to the server every 30 seconds to maintain a lock on a particular record while a user is editing that record.</p>
+
+<p>The logs showed the &#39;lock&#39; request coming in 30 seconds apart with successful responses, but a few minutes later one such request responded with a redirect to the login page. All subsequent requests responded in the same way: with a redirect.</p>
+
+<p>Then at some point there was a user initiated request which also responded in a redirect to the login page. The user logged in, and the next &#39;lock&#39; request responded successfully again. Yet again, some minutes later, they started responding with redirects.</p>
+
+<p>Something was causing the user to lose their Clearance session, which only showed up for them when they took the next action (e.g. submitting the form they were working on, or navigating somewhere authenticated) - thus producing &#39;random&#39; logouts.</p>
+
+<p>But what was the trigger? I studied every request between the last successful response and the next unsuccessful one but the logs did not reveal it.</p>
+
+<p>About this time I learned of some interesting behaviour which was occurring in the current (stable) production code. If an authenticated user navigated to the public site and submitted a form there they got logged out and redirected to the login screen on their next authenticated request.</p>
+
+<p>Upon closer inspection of the public form POST request, I noticed that the request contained the Clearance remember_token cookie with the correct value, but in the response the remember_token cookie contained an empty value. This empty cookie would overwrite the real value in the browser, effectively logging the user out immediately, but only manifesting itself the next time the user made an authenticated request.</p>
+
+<p>This seemed to be too much of a coincidence to be unrelated, but because there are only two forms on the public site and they are not used by the administrators of the system, I couldn&#39;t find the connection between them.</p>
+
+<p>Frustrated with getting so close to the problem but still having no idea what was causing the log outs, I asked my client to once more put the buggy code in Production (after work hours) so that I could test it out myself.</p>
+
+<p>Beginning with the knowledge of the weird empty cookie in public POST requests, I quickly realised that in this latest release, <em>every</em> request sent to the public site was responding with an empty remember_token cookie. Was this the trigger then? I got confirmation from my client that administrators consistently use the public site and the protected site concurrently while updating content; this nicely explained the &#39;random&#39; log outs they&#39;d been experiencing.</p>
+
+<p>I remembered from studying the clearance source code diff that the method that set the cookie changed slightly between versions. In version 0.16, it only set the cookie when the user is signed_in (i.e. the server had received a valid remember_token), whereas in version 1.0 it always set the cookie no matter what. This meant that if the server thought the user wasn&#39;t signed in, it would set the remember_token to a blank value: exactly the behaviour I was seeing.</p>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">lib/clearance/session.rb
+</code></pre></div><div class="highlight"><pre><code class="diff language-diff" data-lang="diff">   def add_cookie_to_headers(headers)
+<span class="gd">-     if signed_in?</span>
+<span class="gd">-        Rack::Utils.set_cookie_header!(</span>
+<span class="gd">-          headers, REMEMBER_TOKEN_COOKIE,</span>
+<span class="gd">-          :value =&gt; current_user.remember_token,</span>
+<span class="gd">-          :expires =&gt; Clearance.configuration.cookie_expiration.call,</span>
+<span class="gd">-          :secure =&gt; Clearance.configuration.secure_cookie,</span>
+<span class="gd">-          :httponly =&gt; Clearance.configuration.httponly,</span>
+<span class="gd">-          :path =&gt; &#39;/&#39;</span>
+<span class="gd">-        )</span>
+<span class="gd">-     end</span>
+<span class="gi">+    Rack::Utils.set_cookie_header!(</span>
+<span class="gi">+        headers,</span>
+<span class="gi">+        REMEMBER_TOKEN_COOKIE,</span>
+<span class="gi">+        :value =&gt; remember_token,</span>
+<span class="gi">+        :expires =&gt; Clearance.configuration.cookie_expiration.call,</span>
+<span class="gi">+        :secure =&gt; Clearance.configuration.secure_cookie,</span>
+<span class="gi">+        :httponly =&gt; Clearance.configuration.httponly,</span>
+<span class="gi">+        :path =&gt; &#39;/&#39;</span>
+<span class="gi">+    )</span>
+    end
+</code></pre></div>
+<p>But why did the server think the user wasn&#39;t signed in on every public facing request while correctly recognising users on authenticated requests?</p>
+
+<p>I had checked numerous times that the remember_token with the correct value was being sent on every request… or was it?</p>
+
+<h3>The Solution</h3>
+
+<p>The answer was in the varnish config all along: it was stripping cookies from public requests in order to perform transparent caching; however a typo in the config meant that while the request cookies were being stripped as intended, response cookies were not.</p>
+
+<p>So varnish was stripping the remember_token out of the request, causing Clearance to think the user was not logged in. In the latest version, it would always send back an empty cookie, overwriting the real value of the cookie in the browser and sending the user to the login page on their next request to an authenticated page.</p>
+
+<h3>The Fix</h3>
+
+<p>The fix turned out to be as simple as correcting the config to strip the cookies from the response on the public site requests.</p>
+
+<p>However, I am thinking about submitting a pull request to Clearance to only set the cookie when the remember_token is in the request, as I am not convinced that it should be sending an empty remember_token cookie on every unauthenticated request.</p>
+
+</div>
+
+    </div>
+
+    <div id="tag-cloud" class="sidebar">
+  <h2>Tags</h2>
+  <hr>
+  <a href="/tag/asset-pipeline.html" class="set-1">asset-pipeline</a> <a href="/tag/backups.html" class="set-1">backups</a> <a href="/tag/bash.html" class="set-1">bash</a> <a href="/tag/capistrano.html" class="set-1">capistrano</a> <a href="/tag/cat.html" class="set-1">cat</a> <a href="/tag/clearance.html" class="set-1">clearance</a> <a href="/tag/command-line.html" class="set-1">command-line</a> <a href="/tag/cookies.html" class="set-1">cookies</a> <a href="/tag/cron.html" class="set-1">cron</a> <a href="/tag/debugging.html" class="set-1">debugging</a> <a href="/tag/dos2unix.html" class="set-1">dos2unix</a> <a href="/tag/factory_girl.html" class="set-1">factory_girl</a> <a href="/tag/gems.html" class="set-1">gems</a> <a href="/tag/git.html" class="set-2">git</a> <a href="/tag/grep.html" class="set-1">grep</a> <a href="/tag/guard.html" class="set-1">guard</a> <a href="/tag/homebrew.html" class="set-1">homebrew</a> <a href="/tag/https.html" class="set-1">https</a> <a href="/tag/keycutter.html" class="set-1">keycutter</a> <a href="/tag/linux.html" class="set-1">linux</a> <a href="/tag/logrotate.html" class="set-1">logrotate</a> <a href="/tag/mac.html" class="set-1">mac</a> <a href="/tag/migrations.html" class="set-1">migrations</a> <a href="/tag/osx.html" class="set-1">osx</a> <a href="/tag/pg_dump.html" class="set-1">pg_dump</a> <a href="/tag/postgresql.html" class="set-3">postgresql</a> <a href="/tag/pow.html" class="set-1">pow</a> <a href="/tag/pry.html" class="set-1">pry</a> <a href="/tag/pry-remote.html" class="set-1">pry-remote</a> <a href="/tag/rails.html" class="set-5">rails</a> <a href="/tag/rake.html" class="set-1">rake</a> <a href="/tag/routes.html" class="set-1">routes</a> <a href="/tag/rspec.html" class="set-2">rspec</a> <a href="/tag/rsync.html" class="set-1">rsync</a> <a href="/tag/ruby.html" class="set-2">ruby</a> <a href="/tag/spork.html" class="set-1">spork</a> <a href="/tag/ssl.html" class="set-1">ssl</a> <a href="/tag/stud.html" class="set-1">stud</a> <a href="/tag/sub-uri.html" class="set-1">sub-uri</a> <a href="/tag/tdd.html" class="set-1">tdd</a> <a href="/tag/test-unit.html" class="set-1">test-unit</a> <a href="/tag/testing.html" class="set-2">testing</a> <a href="/tag/ubuntu.html" class="set-1">ubuntu</a> <a href="/tag/varnish.html" class="set-1">varnish</a>
+</div>
+
+    <div class="footer">
+      <div class="contact">
+	<p>
+	  Shevaun Coker<br />
+	  Web Developer<br />
+	</p>
+      </div>
+      <div class="contact">
+	<p>
+	<a href="https://github.com/shevaun">github.com/shevaun</a><br />
+	<a href="https://twitter.com/shevauncoker">twitter.com/shevauncoker</a><br />
+	</p>
+      </div>
+      </div>
+      </div>
+  </body>
+</html>
