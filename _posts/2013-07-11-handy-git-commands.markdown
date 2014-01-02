@@ -1,13 +1,18 @@
 ---
 layout: post
-title: Handy git commands
+title: Handy Git Commands
 enki_id: 20
 tags: git
 ---
+
 ### View commit history for a deleted file
 
-@git log -- path/to/file@
+```bash
+$ git log -- path/to/file
+```
 
 ### View most recent git commands (useful for undoing commands)
 
-@git reflog@
+```bash
+$ git reflog
+```

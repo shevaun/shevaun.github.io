@@ -8,16 +8,21 @@ I often find I am creating dumps of data and restoring it to another database, b
 
 ### Dump PostgreSQL database to a file
 
-@$ pg_dump -h [db_host] -c [db_name] > /where/to/dump/db_name_dump.sql@
+```bash
+$ pg_dump -h [db_host] -c [db_name] > /where/to/dump/db_name_dump.sql
+```
 
 ### If the database to be restored doesn't already exist, create it
 
-{% highlight bash %}
+```bash
 $ psql template1
+```
+```postgres
 CREATE DATABASE [db_name] OWNER [db_owner] ENCODING 'UTF8';
-\q
-{% endhighlight %}
+```
 
 ### Restore PostgreSQL database from the dump file
 
-@$ psql -h [db_host] [db_name] < db_name_dump.sql@
+```bash
+$ psql -h [db_host] [db_name] < db_name_dump.sql
+```
