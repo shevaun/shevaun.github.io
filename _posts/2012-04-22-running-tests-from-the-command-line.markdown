@@ -2,7 +2,7 @@
 layout: post
 title: Running tests from the command line
 enki_id: 7
-tags: ruby, rails, test unit, rspec, testing, command line
+tags: ruby rails test-unit rspec testing command-line
 ---
 
 Sometimes you want to be able to isolate a single test and run it independently of any other tests.

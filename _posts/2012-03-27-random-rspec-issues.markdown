@@ -2,7 +2,7 @@
 layout: post
 title: Random RSpec issues
 enki_id: 3
-tags: rspec, testing
+tags: rspec testing
 ---
 
 ### If RSpec hangs while running a test

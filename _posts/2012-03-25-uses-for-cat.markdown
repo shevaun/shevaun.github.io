@@ -2,7 +2,7 @@
 layout: post
 title: Uses for CAT
 enki_id: 2
-tags: cat, linux, ubuntu
+tags: cat linux ubuntu
 ---
 
 ### Append line(s) to end of a file

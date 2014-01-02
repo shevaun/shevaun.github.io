@@ -2,7 +2,7 @@
 layout: post
 title: Generating correct asset paths for a Rails app running under a sub-uri
 enki_id: 15
-tags: rails, asset-pipeline, capistrano, sub-uri
+tags: rails asset-pipeline capistrano sub-uri
 ---
 
 By default, when assets are precompiled, the paths are generated as absolute paths beginning with `/assets`.

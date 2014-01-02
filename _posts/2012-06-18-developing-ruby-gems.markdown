@@ -2,7 +2,7 @@
 layout: post
 title: Developing Ruby Gems
 enki_id: 8
-tags: ruby, gems, keycutter
+tags: ruby gems keycutter
 ---
 
 ### Creating a gem from scratch

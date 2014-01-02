@@ -2,7 +2,7 @@
 layout: post
 title: Fixing line endings for git
 enki_id: 18
-tags: git, dos2unix
+tags: git dos2unix
 ---
 
 Every now and then I come across this error when trying to commit files to git:

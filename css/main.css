@@ -115,6 +115,10 @@ a:visited { color: #00a; }
   //border-top: 1px solid #82b0bf;
 }
 
+#tag-cloud {
+  margin-top: 50px;
+}
+
 
 .footer {
   font-size: 80%;

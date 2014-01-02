@@ -2,7 +2,7 @@
 layout: post
 title: Schedule daily PostgreSQL backups
 enki_id: 16
-tags: postgresql, backups, cron, pg_dump
+tags: postgresql backups cron pg_dump
 ---
 
 ### Create cron task to back up database

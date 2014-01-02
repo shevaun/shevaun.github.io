@@ -2,7 +2,7 @@
 layout: post
 title: Using Rsync to copy database backups from a remote server
 enki_id: 13
-tags: rsync, crontab, backups
+tags: rsync cron backups
 ---
 
 I create daily backups of this blog's database, but since they are stored on the same server as my application, they won't be much good if the whole server dies.

@@ -2,7 +2,7 @@
 layout: post
 title: Remote Debugging with Pry and Pow
 enki_id: 14
-tags: pow, pry, pry-remote, debugging
+tags: pow pry pry-remote debugging
 ---
 
 I use Pow for running my Rack Apps on my dev machine and love it. However, recently I needed to use Pry to debug some weird behaviour I was seeing in my app.

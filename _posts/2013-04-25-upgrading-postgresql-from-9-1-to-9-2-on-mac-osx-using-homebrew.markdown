@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading PostgreSQL from 9.1 to 9.2 on Mac OSX
 enki_id: 19
-tags: postgresql, homebrew, mac osx
+tags: postgresql homebrew mac osx
 ---
 
 ## Steps to upgrade PostgreSQL from 9.1 to 9.2 on Mac OSX using Homebrew

@@ -2,7 +2,7 @@
 layout: post
 title: Generate a Rails 3.2 project with rspec & factory_girl
 enki_id: 9
-tags: rails, rspec, factory_girl
+tags: rails rspec factory_girl
 ---
 
 If you are starting a new Rails project and you want to use RSpec and FactoryGirl instead of Test::Unit and Fixtures, it's easy to get Rails to recognize this and generate the correct files for you.

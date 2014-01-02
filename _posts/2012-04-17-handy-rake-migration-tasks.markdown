@@ -2,7 +2,7 @@
 layout: post
 title: Handy Rake Migration Tasks
 enki_id: 6
-tags: ruby, rails, rake, migrations
+tags: ruby rails rake migrations
 ---
 
 *    Run Pending Migrations

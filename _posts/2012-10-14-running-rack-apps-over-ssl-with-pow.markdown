@@ -2,7 +2,7 @@
 layout: post
 title: Running Rack Apps over SSL with Pow
 enki_id: 12
-tags: pow, https, ssl, stud
+tags: pow https ssl stud
 ---
 I've recently switched to the [Pow Web Server](http://pow.cx) for Rack Apps and am loving it so far.
 

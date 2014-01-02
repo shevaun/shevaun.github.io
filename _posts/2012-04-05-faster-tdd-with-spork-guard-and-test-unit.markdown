@@ -2,7 +2,7 @@
 layout: post
 title: Faster TDD with Spork, Guard & Test::Unit
 enki_id: 5
-tags: rails, guard, spork, test unit, tdd
+tags: rails guard spork test-unit tdd testing
 ---
 
 Using [spork](https://github.com/sporkrb/spork) and [guard](https://github.com/guard/guard) together is a great way to speed up the test feedback cycle. Having minimum latency between code changes and test output is a great productivity booster, and is especially useful for certain tasks such as Test Driven Development, fixing bugs or refactoring code.

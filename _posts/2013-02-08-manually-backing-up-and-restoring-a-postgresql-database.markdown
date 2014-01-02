@@ -2,7 +2,7 @@
 layout: post
 title: Manually Backing up and Restoring a PostgreSQL Database
 enki_id: 17
-tags: postgresql, pg_dump
+tags: postgresql pg_dump
 ---
 I often find I am creating dumps of data and restoring it to another database, but not frequently enough that I can remember the syntax off the top of my head.
 

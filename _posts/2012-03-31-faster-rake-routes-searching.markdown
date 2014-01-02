@@ -2,7 +2,7 @@
 layout: post
 title: Faster Rake Routes Searching
 enki_id: 4
-tags: rails, routes, grep
+tags: rails routes grep
 ---
 
 ### groute

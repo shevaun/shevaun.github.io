@@ -2,7 +2,7 @@
 layout: post
 title: ! 'Clearance, Varnish and Rails: An Exercise in Bug Stalking'
 enki_id: 21
-tags: rails, varnish, clearance, cookies
+tags: rails varnish clearance cookies
 ---
 
 ### The Background
