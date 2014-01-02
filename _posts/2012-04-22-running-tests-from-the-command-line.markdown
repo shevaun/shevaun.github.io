@@ -9,20 +9,28 @@ Sometimes you want to be able to isolate a single test and run it independently 
 
 ### Using Test::Unit
 
-*    Run a single test file
+* Run a single test file
 
-     `ruby -I"lib:test" test/unit/file_load_test.rb`
+    ```bash
+	$ ruby -I"lib:test" test/unit/file_load_test.rb
+	```
 
-*    Run a single test within a file
+* Run a single test within a file
 
-     `ruby -I"lib:test" test/unit/file_load_test.rb -n test_should_load_a_gz_file`
+    ```bash
+	$ ruby -I"lib:test" test/unit/file_load_test.rb -n test_should_load_a_gz_file
+	```
 
 ### Using RSpec
 
-*    Run a single test file
+* Run a single test file
 
-     `rspec spec/models/transmission_outage_spec.rb --format doc`
+    ```bash
+	$ rspec spec/models/transmission_outage_spec.rb --format doc
+	```
 
-*    Run a single test within a file (where 56 is the line number of the test to be run)
+* Run a single test within a file (where 56 is the line number of the test to be run)
 
-     `rspec spec/models/transmission_outage_spec.rb:56 --format doc`
+    ```bash
+	$ rspec spec/models/transmission_outage_spec.rb:56 --format doc
+	```

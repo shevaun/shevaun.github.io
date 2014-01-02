@@ -7,20 +7,30 @@ tags: ruby, rails, rake, migrations
 
 *    Run Pending Migrations
 
-     `rake db:migrate`
+     ```bash
+	 $ rake db:migrate
+	 ```
 
 *    Rollback last migration
 
-     `rake db:rollback`
+     ```bash
+	 $ rake db:rollback
+	 ```
 
 *    Rollback several migrations
 
-     `rake db:rollback STEP=3`
+     ```bash
+	 $ rake db:rollback STEP=3
+	 ```
 
 *    Rerun last/several migrations
 
-     `rake db:migrate:redo (STEP=3)`
+     ```bash
+	 $ rake db:migrate:redo (STEP=3)
+	 ```
 
 *    Recreate the database from scratch
 
-     `rake db:drop db:create db:migrate`
+     ```bash
+	 $ rake db:drop db:create db:migrate
+	 ```
