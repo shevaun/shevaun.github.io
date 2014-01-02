@@ -1,7 +1,0 @@
-name: Live to Code
-subtitle: code to live
-markdown: redcarpet
-pygments: true
-gems: [jekyll/tagging]
-tag_page_layout: tag_page_layout
-tag_page_dir: tag
