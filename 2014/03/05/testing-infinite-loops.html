@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Testing Infinite Loops with RSpec</title>
+    <meta name="viewport" content="width=device-width">
+
+    <!-- syntax highlighting CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="site">
+      <div class="header">
+        <h1 class="title"><a href="/">Live to Code</a></h1>
+        <h2 class="subtitle">code to live</h2>
+      </div>
+
+      <div class="content">
+        <h2>Testing Infinite Loops with RSpec</h2>
+<hr>
+<p class="meta">05 Mar 2014 | <a href="/tag/rspec.html" rel="tag">rspec</a>, <a href="/tag/ruby.html" rel="tag">ruby</a></p>
+<div class="post">
+<p>Recently I had to make a minor modification to a job scheduler; a ruby process that runs an infinite loop on startup, which polls the database for jobs that need processing every so often.</p>
+
+<p>The code was easy to change but for a while I was stumped on how I could test my changes, since they were inside the loop.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Scheduling</span><span class="o">::</span><span class="no">Daemon</span>
+  <span class="k">def</span> <span class="nf">run</span>
+    <span class="c1"># ... (code to set up polling period and calculate next tick)</span>
+    <span class="kp">loop</span> <span class="k">do</span>
+      <span class="k">if</span> <span class="no">JobScheduler</span><span class="o">::</span><span class="no">PropertiesControl</span> <span class="o">&amp;&amp;</span>
+        <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">getProperties</span><span class="o">[</span><span class="s1">&#39;jobScheduler.mode&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;stop&#39;</span>
+        <span class="c1"># ... (code to write to log etc)</span>
+        <span class="k">break</span>
+      <span class="k">end</span>
+
+      <span class="c1"># ... (code to sleep for calculated period of time)</span>
+      <span class="no">JobScheduler</span><span class="o">::</span><span class="n">process_jobs</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>One option was to refactor the contents of the loop into a separate method and just test that, but I wanted to be able to test the entire run method, including the termination path. I also didn&#39;t want to make huge changes to this class as it&#39;s currently used in production by a lot of different systems and is a critical part of the system.</p>
+
+<p>I realised that if I refactored the exit condition to be a method, I could stub it and get it to return false on its first invocation then true on its second invocation; ensuring the loop only gets executed once and then terminates.</p>
+
+<p>Refactored class:</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Scheduling</span><span class="o">::</span><span class="no">Daemon</span>
+  <span class="k">def</span> <span class="nf">run</span>
+    <span class="c1"># ... (code to set up polling period and calculate next tick)</span>
+    <span class="kp">loop</span> <span class="k">do</span>
+      <span class="k">if</span> <span class="n">daemon_received_stop_signal?</span>
+        <span class="c1"># ... (code to write to log etc)</span>
+        <span class="k">break</span>
+      <span class="k">end</span>
+
+      <span class="c1"># ... (code to sleep for calculated period of time)</span>
+      <span class="no">JobScheduler</span><span class="o">::</span><span class="n">process_jobs</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">daemon_received_stop_signal?</span>
+    <span class="no">JobScheduler</span><span class="o">::</span><span class="no">PropertiesControl</span> <span class="o">&amp;&amp;</span>
+      <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">getProperties</span><span class="o">[</span><span class="s1">&#39;jobScheduler.mode&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;stop&#39;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Now the spec is easy to write and run:</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="no">Scheduling</span><span class="o">::</span><span class="no">Daemon</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">&quot;#run&quot;</span> <span class="k">do</span>
+    <span class="n">before</span> <span class="k">do</span>
+      <span class="no">Scheduling</span><span class="o">::</span><span class="no">Daemon</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:daemon_received_stop_signal?</span><span class="p">)</span><span class="o">.</span>
+        <span class="n">and_return</span><span class="p">(</span><span class="kp">false</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>  <span class="c1"># execute loop once then exit</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;calls process_jobs&quot;</span> <span class="k">do</span>
+      <span class="no">JobScheduler</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:process_jobs</span><span class="p">)</span>
+      <span class="no">Scheduling</span><span class="o">::</span><span class="no">Daemon</span><span class="o">.</span><span class="n">run</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+</div>
+
+      </div>
+
+      <div id="tag-cloud" class="sidebar">
+  <h2>What I Write About</h2>
+  <hr>
+  <a href="/tag/asset-pipeline.html" class="set-1">asset-pipeline</a> <a href="/tag/backups.html" class="set-1">backups</a> <a href="/tag/bash.html" class="set-1">bash</a> <a href="/tag/capistrano.html" class="set-1">capistrano</a> <a href="/tag/cat.html" class="set-1">cat</a> <a href="/tag/clearance.html" class="set-1">clearance</a> <a href="/tag/command-line.html" class="set-1">command-line</a> <a href="/tag/cookies.html" class="set-1">cookies</a> <a href="/tag/cron.html" class="set-1">cron</a> <a href="/tag/debugging.html" class="set-1">debugging</a> <a href="/tag/dos2unix.html" class="set-1">dos2unix</a> <a href="/tag/factory_girl.html" class="set-1">factory_girl</a> <a href="/tag/gems.html" class="set-1">gems</a> <a href="/tag/git.html" class="set-2">git</a> <a href="/tag/grep.html" class="set-1">grep</a> <a href="/tag/guard.html" class="set-1">guard</a> <a href="/tag/homebrew.html" class="set-1">homebrew</a> <a href="/tag/https.html" class="set-1">https</a> <a href="/tag/keycutter.html" class="set-1">keycutter</a> <a href="/tag/linux.html" class="set-1">linux</a> <a href="/tag/logrotate.html" class="set-1">logrotate</a> <a href="/tag/mac.html" class="set-1">mac</a> <a href="/tag/migrations.html" class="set-1">migrations</a> <a href="/tag/osx.html" class="set-1">osx</a> <a href="/tag/pg_dump.html" class="set-1">pg_dump</a> <a href="/tag/postgresql.html" class="set-3">postgresql</a> <a href="/tag/pow.html" class="set-1">pow</a> <a href="/tag/pry.html" class="set-1">pry</a> <a href="/tag/pry-remote.html" class="set-1">pry-remote</a> <a href="/tag/rails.html" class="set-5">rails</a> <a href="/tag/rake.html" class="set-1">rake</a> <a href="/tag/routes.html" class="set-1">routes</a> <a href="/tag/rspec.html" class="set-3">rspec</a> <a href="/tag/rsync.html" class="set-1">rsync</a> <a href="/tag/ruby.html" class="set-3">ruby</a> <a href="/tag/spork.html" class="set-1">spork</a> <a href="/tag/ssl.html" class="set-1">ssl</a> <a href="/tag/stud.html" class="set-1">stud</a> <a href="/tag/sub-uri.html" class="set-1">sub-uri</a> <a href="/tag/tdd.html" class="set-1">tdd</a> <a href="/tag/test-unit.html" class="set-1">test-unit</a> <a href="/tag/testing.html" class="set-2">testing</a> <a href="/tag/ubuntu.html" class="set-1">ubuntu</a> <a href="/tag/varnish.html" class="set-1">varnish</a>
+</div>
+
+      <div class="footer">
+        <div class="contact">
+	  <p>
+	    <a href="about.html">Shevaun Coker</a><br />
+	    Web Developer<br />
+	  </p>
+        </div>
+        <div class="contact">
+	  <p>
+	    <a href="https://github.com/shevaun">github.com/shevaun</a><br />
+	    <a href="https://twitter.com/shevauncoker">twitter.com/shevauncoker</a><br />
+	  </p>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-30123052-1']);
+  _gaq.push(['_setDomainName', 'livetocode.co.nz']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+  </body>
+</html>
