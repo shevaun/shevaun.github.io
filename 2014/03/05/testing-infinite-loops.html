@@ -27,7 +27,7 @@
 <p>Recently I had to make a minor modification to a job scheduler; a ruby process that runs an infinite loop on startup, which polls the database for jobs that need processing every so often.</p>
 
 <p>The code was easy to change but for a while I was stumped on how I could test my changes, since they were inside the loop.</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Scheduling</span><span class="o">::</span><span class="no">Daemon</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Scheduling</span><span class="o">::</span><span class="no">Daemon</span>
   <span class="k">def</span> <span class="nf">run</span>
     <span class="c1"># ... (code to set up polling period and calculate next tick)</span>
     <span class="kp">loop</span> <span class="k">do</span>
@@ -48,7 +48,7 @@
 <p>I realised that if I refactored the exit condition to be a method, I could stub it and get it to return false on its first invocation then true on its second invocation; ensuring the loop only gets executed once and then terminates.</p>
 
 <p>Refactored class:</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Scheduling</span><span class="o">::</span><span class="no">Daemon</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Scheduling</span><span class="o">::</span><span class="no">Daemon</span>
   <span class="k">def</span> <span class="nf">run</span>
     <span class="c1"># ... (code to set up polling period and calculate next tick)</span>
     <span class="kp">loop</span> <span class="k">do</span>
@@ -71,7 +71,7 @@
 <span class="k">end</span>
 </code></pre></div>
 <p>Now the spec is easy to write and run:</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="no">Scheduling</span><span class="o">::</span><span class="no">Daemon</span> <span class="k">do</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="no">Scheduling</span><span class="o">::</span><span class="no">Daemon</span> <span class="k">do</span>
   <span class="n">describe</span> <span class="s2">&quot;#run&quot;</span> <span class="k">do</span>
     <span class="n">before</span> <span class="k">do</span>
       <span class="no">Scheduling</span><span class="o">::</span><span class="no">Daemon</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:daemon_received_stop_signal?</span><span class="p">)</span><span class="o">.</span>
@@ -98,7 +98,7 @@
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>

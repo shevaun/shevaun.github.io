@@ -25,11 +25,11 @@
 <p class="meta">19 Sep 2012 | <a href="/tag/postgresql.html" rel="tag">postgresql</a></p>
 <div class="post">
 <p>Sometimes I want to alter a PostgreSQL database in some way but I am prevented by other connections, as this error indicates:</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">ERROR:  database <span class="s2">&quot;my_database&quot;</span> is being accessed by other users
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">ERROR:  database <span class="s2">&quot;my_database&quot;</span> is being accessed by other users
 DETAIL:  There are 2 other session<span class="o">(</span>s<span class="o">)</span> using the database.
 </code></pre></div>
 <p>It&#39;s not always easy to figure out which applications have open sessions, so here&#39;s a great script I found on <a href="http://stackoverflow.com/a/5109190/156109">Stack Overflow</a> to terminate all connections to the database:</p>
-<div class="highlight"><pre><code class="postgres language-postgres" data-lang="postgres"><span class="k">SELECT</span>
+<div class="highlight"><pre><code class="language-postgres" data-lang="postgres"><span class="k">SELECT</span>
     <span class="n">pg_terminate_backend</span><span class="p">(</span><span class="n">procpid</span><span class="p">)</span>
 <span class="k">FROM</span>
     <span class="n">pg_stat_activity</span>
@@ -53,7 +53,7 @@ DETAIL:  There are 2 other session<span class="o">(</span>s<span class="o">)</sp
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>

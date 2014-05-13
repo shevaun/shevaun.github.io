@@ -68,8 +68,8 @@ Seemingly at random (sometimes from clicking a link, sometimes after submitting 
 <p>Beginning with the knowledge of the weird empty cookie in public POST requests, I quickly realised that in this latest release, <em>every</em> request sent to the public site was responding with an empty remember_token cookie. Was this the trigger then? I got confirmation from my client that administrators consistently use the public site and the protected site concurrently while updating content; this nicely explained the &#39;random&#39; log outs they&#39;d been experiencing.</p>
 
 <p>I remembered from studying the clearance source code diff that the method that set the cookie changed slightly between versions. In version 0.16, it only set the cookie when the user is signed_in (i.e. the server had received a valid remember_token), whereas in version 1.0 it always set the cookie no matter what. This meant that if the server thought the user wasn&#39;t signed in, it would set the remember_token to a blank value: exactly the behaviour I was seeing.</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">lib/clearance/session.rb
-</code></pre></div><div class="highlight"><pre><code class="diff language-diff" data-lang="diff">   def add_cookie_to_headers(headers)
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">lib/clearance/session.rb
+</code></pre></div><div class="highlight"><pre><code class="language-diff" data-lang="diff">   def add_cookie_to_headers(headers)
 <span class="gd">-     if signed_in?</span>
 <span class="gd">-        Rack::Utils.set_cookie_header!(</span>
 <span class="gd">-          headers, REMEMBER_TOKEN_COOKIE,</span>
@@ -120,7 +120,7 @@ Seemingly at random (sometimes from clicking a link, sometimes after submitting 
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>

@@ -28,16 +28,16 @@
 
 <ol>
 <li><p>Create a skeleton gem</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"> <span class="nv">$ </span>bundle gem my_awesome_gem
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"> <span class="nv">$ </span>bundle gem my_awesome_gem
 </code></pre></div></li>
 <li><p>Write code and tests</p></li>
 <li><p>Build and install gem locally</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>rake build
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>rake build
 <span class="nv">$ </span>gem install pkg/my_awesome_gem-0.0.4.gem
 </code></pre></div>
 <p>(or you can type <code>$ rake install</code> instead)</p></li>
 <li><p>[optional] Push the gem to rubygems.org</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"> <span class="nv">$ </span>gem push pkg/my_awesome_gem-0.0.4.gem
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"> <span class="nv">$ </span>gem push pkg/my_awesome_gem-0.0.4.gem
 </code></pre></div></li>
 </ol>
 
@@ -47,31 +47,31 @@
 <li><p>Make the code changes</p></li>
 <li><p>Update the version number in <code>version.rb</code></p></li>
 <li><p>Build and install the gem locally</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>rake install
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>rake install
 </code></pre></div></li>
 <li><p>[optional] Push the gem to <a href="http://rubygems.org">rubygems.org</a></p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>gem push pkg/my_awesome_gem-0.0.4.gem
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>gem push pkg/my_awesome_gem-0.0.4.gem
 </code></pre></div></li>
 </ol>
 
 <h3>Unpacking a gem into a ruby application</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>gem unpack my_awesome_gem -v 0.0.4 --target vendor/gems
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>gem unpack my_awesome_gem -v 0.0.4 --target vendor/gems
 </code></pre></div>
 <h3>Pushing a new version to rubygems</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>gem push pkg/my_awesome_gem-0.0.4.gem
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>gem push pkg/my_awesome_gem-0.0.4.gem
 </code></pre></div>
 <h3>Multiple rubygems accounts</h3>
 
 <ol>
 <li><p>Install <a href="https://github.com/joshfrench/keycutter">keycutter</a></p></li>
 <li><p>View existing keys (default key is marked with a *)</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>gem keys --list
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>gem keys --list
 </code></pre></div></li>
 <li><p>Add a new key (you&#39;ll be prompted for your credentials)</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>gem keys --add work
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>gem keys --add work
 </code></pre></div></li>
 <li><p>Change the key used to connect to rubygems</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>gem keys --default work
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>gem keys --default work
 </code></pre></div></li>
 </ol>
 
@@ -88,7 +88,7 @@
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>

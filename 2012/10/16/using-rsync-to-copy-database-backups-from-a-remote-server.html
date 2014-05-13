@@ -29,20 +29,20 @@
 <p>I wrote a small script to rsync my database backups onto my MacBook Air, which gets routinely backed up onto an external hard drive with Time Machine.</p>
 
 <h3>Create script to rsync backup directory</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>vi ~/scripts/rsync-livetocode-backups
-</code></pre></div><div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>vi ~/scripts/rsync-livetocode-backups
+</code></pre></div><div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
 rsync -rv shevaun@livetocode:/var/backups/postgres ~/backups/livetocode
 </code></pre></div>
 <h3>Make the script executable</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>chmod +x ~/scripts/rsync-livetocode-backups
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>chmod +x ~/scripts/rsync-livetocode-backups
 </code></pre></div>
 <h3>Write cron task to run the script daily</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>crontab -e
-</code></pre></div><div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="c"># m  h  dom mon dow user command</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>crontab -e
+</code></pre></div><div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># m  h  dom mon dow user command</span>
 0 12  *   *   *  * ~/scripts/rsync-livetocode-backups
 </code></pre></div>
 <h3>View the cron task to make sure it saved correctly</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>crontab -l
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>crontab -l
 </code></pre></div>
 </div>
 
@@ -57,7 +57,7 @@ rsync -rv shevaun@livetocode:/var/backups/postgres ~/backups/livetocode
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>

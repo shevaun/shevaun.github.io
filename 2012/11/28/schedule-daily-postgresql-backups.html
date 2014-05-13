@@ -25,8 +25,8 @@
 <p class="meta">28 Nov 2012 | <a href="/tag/postgresql.html" rel="tag">postgresql</a>, <a href="/tag/backups.html" rel="tag">backups</a>, <a href="/tag/cron.html" rel="tag">cron</a>, <a href="/tag/pg_dump.html" rel="tag">pg_dump</a></p>
 <div class="post">
 <h3>Create cron task to back up database</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>vim /etc/cron.d/db_backups
-</code></pre></div><div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="c"># m  h  dom mon dow user     command</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>vim /etc/cron.d/db_backups
+</code></pre></div><div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># m  h  dom mon dow user     command</span>
 12 3  *   *   * &lt;user&gt; pg_dump -c &lt;db_name&gt; &gt; <span class="se">\</span>
                             <span class="s2">&quot;/path/to/backups/`date +\%Y-\%m-\%d-&lt;db_name&gt;.sql`&quot;</span>
 </code></pre></div>
@@ -47,7 +47,7 @@
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>

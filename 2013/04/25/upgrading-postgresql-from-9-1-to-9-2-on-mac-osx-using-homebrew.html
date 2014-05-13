@@ -31,40 +31,40 @@
 <h3>1. Stop your postgres server</h3>
 
 <p>If you&#39;re using the launcher:</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
 </code></pre></div>
 <p>otherwise:</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres stop -s -m fast
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres stop -s -m fast
 </code></pre></div>
 <h3>2. Move your existing installation</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>mv /usr/local/var/postgres /usr/local/var/postgres91
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>mv /usr/local/var/postgres /usr/local/var/postgres91
 </code></pre></div>
 <h3>3. Download &amp; upgrade the 9.2 formula</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>curl https://raw.github.com/fragility/homebrew/737af01178590950749cf5e841f2d086c57<span class="se">\</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>curl https://raw.github.com/fragility/homebrew/737af01178590950749cf5e841f2d086c57<span class="se">\</span>
          c5a80/Library/Formula/postgresql.rb &gt; /usr/local/Library/Formula/postgresql.rb
 <span class="nv">$ </span>brew upgrade postgresql
 <span class="nv">$ </span>initdb /usr/local/var/postgres -E utf8
 </code></pre></div>
 <h3>4. If you have the postgis library installed, do the following</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>brew uninstall postgis
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>brew uninstall postgis
 <span class="nv">$ </span>brew tap homebrew/versions
 <span class="nv">$ </span>brew edit postgis15
 </code></pre></div>
 <p>replace all instances of <code>postgresql9</code> with <code>postgresql</code></p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>brew install postgis15
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>brew install postgis15
 </code></pre></div>
 <h3>5. Upgrade your databases</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>pg_upgrade -b /usr/local/Cellar/postgresql/9.1.2/bin -B <span class="se">\</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>pg_upgrade -b /usr/local/Cellar/postgresql/9.1.2/bin -B <span class="se">\</span>
     /usr/local/Cellar/postgresql/9.2.0/bin -d /usr/local/var/postgres91 -D <span class="se">\</span>
     /usr/local/var/postgres
 </code></pre></div>
 <h3>6. Start the postgres server</h3>
 
 <p>If you&#39;re using the launcher:</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
 </code></pre></div>
 <p>Otherwise:</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
 </code></pre></div>
 <p>That should be all you need to do to upgrade Postgres, but keep reading if you&#39;re still having issues.</p>
 
@@ -73,13 +73,13 @@
 <h3>Missing socket directory</h3>
 
 <p>When I tried to connect to my new postgres server with a Rails app, I discovered I didn&#39;t have the socket directory that the rails apps use to connect to postgres.</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>vi /usr/local/var/postgres/postgresql.conf
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>vi /usr/local/var/postgres/postgresql.conf
 </code></pre></div>
 <p>change <code>unix_socket_directory = &#39;/var/pgsql_socket&#39;</code></p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>mkdir /var/pgsql_socket
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>mkdir /var/pgsql_socket
 </code></pre></div>
 <p>(and chown/chmod as necessary)</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="c"># or unload launcher</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># or unload launcher</span>
 <span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres stop -s -m fast
 <span class="c"># or load launcher</span>
 <span class="nv">$ </span>pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
@@ -91,7 +91,7 @@
 <p>If you are using an earlier version of PostGIS e.g. 1.5 and are upgrading to 2.0.x then you can either do a <a href="http://postgis.refractions.net/documentation/manual-2.0/postgis_installation.html#hard_upgrade">HARD UPGRADE</a> or you can simply drop your DB and start again with the new version from an updated template:</p>
 
 <p>Assuming your database.yml looks like this:</p>
-<div class="highlight"><pre><code class="yaml language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">development</span><span class="p-Indicator">:</span>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="l-Scalar-Plain">development</span><span class="p-Indicator">:</span>
 <span class="l-Scalar-Plain">adapter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">postgresql</span>
 <span class="l-Scalar-Plain">encoding</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">unicode</span>
 <span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span>
@@ -102,14 +102,14 @@
 </code></pre></div>
 <ol>
 <li><p>Remove old postgres scripts</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>psql -d template_postgis &lt; <span class="se">\</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>psql -d template_postgis &lt; <span class="se">\</span>
     /usr/local/Cellar/postgis15/1.5.8/share/postgis/uninstall_postgis.sql
 </code></pre></div></li>
 <li><p>Connect to new database</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>psql -d template_postgis
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>psql -d template_postgis
 </code></pre></div></li>
 <li><p>Install PostGIS (your file paths may vary)</p>
-<div class="highlight"><pre><code class="postgres language-postgres" data-lang="postgres"><span class="k">CREATE</span> <span class="k">EXTENSION</span> <span class="n">postgis</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-postgres" data-lang="postgres"><span class="k">CREATE</span> <span class="k">EXTENSION</span> <span class="n">postgis</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">EXTENSION</span> <span class="n">postgis_topology</span><span class="p">;</span>
 <span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">ON</span> <span class="n">geometry_columns</span> <span class="k">TO</span> <span class="n">PUBLIC</span><span class="p">;</span>
 <span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">ON</span> <span class="n">geography_columns</span> <span class="k">TO</span> <span class="n">PUBLIC</span><span class="p">;</span>
@@ -121,7 +121,7 @@
 <span class="k">SELECT</span> <span class="n">PostGIS_full_version</span><span class="p">();</span> <span class="c1">--should be new version e.g. 2.0.3</span>
 </code></pre></div></li>
 <li><p>Recreate database</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>rake db:drop
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>rake db:drop
 <span class="nv">$ </span>rake db:create
 </code></pre></div></li>
 </ol>
@@ -139,7 +139,7 @@
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>

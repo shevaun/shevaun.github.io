@@ -27,14 +27,14 @@
 <p>I often find I am creating dumps of data and restoring it to another database, but not frequently enough that I can remember the syntax off the top of my head.</p>
 
 <h3>Dump PostgreSQL database to a file</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>pg_dump -h <span class="o">[</span>db_host<span class="o">]</span> -c <span class="o">[</span>db_name<span class="o">]</span> &gt; /where/to/dump/db_name_dump.sql
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>pg_dump -h <span class="o">[</span>db_host<span class="o">]</span> -c <span class="o">[</span>db_name<span class="o">]</span> &gt; /where/to/dump/db_name_dump.sql
 </code></pre></div>
 <h3>If the database to be restored doesn&#39;t already exist, create it</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>psql template1
-</code></pre></div><div class="highlight"><pre><code class="postgres language-postgres" data-lang="postgres"><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="p">[</span><span class="n">db_name</span><span class="p">]</span> <span class="k">OWNER</span> <span class="p">[</span><span class="n">db_owner</span><span class="p">]</span> <span class="k">ENCODING</span> <span class="s1">&#39;UTF8&#39;</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>psql template1
+</code></pre></div><div class="highlight"><pre><code class="language-postgres" data-lang="postgres"><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="p">[</span><span class="n">db_name</span><span class="p">]</span> <span class="k">OWNER</span> <span class="p">[</span><span class="n">db_owner</span><span class="p">]</span> <span class="k">ENCODING</span> <span class="s1">&#39;UTF8&#39;</span><span class="p">;</span>
 </code></pre></div>
 <h3>Restore PostgreSQL database from the dump file</h3>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>psql -h <span class="o">[</span>db_host<span class="o">]</span> <span class="o">[</span>db_name<span class="o">]</span> &lt; db_name_dump.sql
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>psql -h <span class="o">[</span>db_host<span class="o">]</span> <span class="o">[</span>db_name<span class="o">]</span> &lt; db_name_dump.sql
 </code></pre></div>
 </div>
 
@@ -49,7 +49,7 @@
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>

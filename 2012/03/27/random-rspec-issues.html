@@ -27,10 +27,10 @@
 <h3>If RSpec hangs while running a test</h3>
 
 <p>Look for cases where you have the subject followed by space should, e.g.</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">specify</span> <span class="p">{</span> <span class="n">project</span> <span class="n">should</span> <span class="n">eq</span> <span class="n">another_project</span> <span class="p">}</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">specify</span> <span class="p">{</span> <span class="n">project</span> <span class="n">should</span> <span class="n">eq</span> <span class="n">another_project</span> <span class="p">}</span>
 </code></pre></div>
 <p>and replace the space with a full stop:</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">specify</span> <span class="p">{</span> <span class="n">project</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">another_project</span> <span class="p">}</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">specify</span> <span class="p">{</span> <span class="n">project</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">another_project</span> <span class="p">}</span>
 </code></pre></div>
 <p>This has happened to me twice now, and the first time it took ages to debug.</p>
 
@@ -47,7 +47,7 @@
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>

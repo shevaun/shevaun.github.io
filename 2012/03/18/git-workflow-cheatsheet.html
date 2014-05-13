@@ -28,22 +28,19 @@
 
 <div class="highlight"><pre><code class="bash"><span class="nv">$ </span>git checkout -b branch_name    <span class="c"># create new local branch and switch to it</span>
 <span class="nv">$ </span>git commit -am                 <span class="c"># commit changes</span>
-<span class="nv">$ </span>git push -u origin branch_name <span class="c"># push branch to remote repo and track it</span>
-</code></pre></div>
+<span class="nv">$ </span>git push -u origin branch_name <span class="c"># push branch to remote repo and track it</span></code></pre></div>
 
 <h3>Working on someone else&#39;s branch</h3>
 
 <div class="highlight"><pre><code class="bash"><span class="nv">$ </span>git fetch                      <span class="c"># pull new branches down</span>
-<span class="nv">$ </span>git checkout branch_name
-</code></pre></div>
+<span class="nv">$ </span>git checkout branch_name</code></pre></div>
 
 <h3>Merging a feature branch into master</h3>
 
 <div class="highlight"><pre><code class="bash"><span class="nv">$ </span>git checkout master
 <span class="nv">$ </span>git merge --no-ff branch_name  <span class="c"># merge branch into master with a new commit</span>
 <span class="nv">$ </span>git push origin :branch_name   <span class="c"># delete the remote branch</span>
-<span class="nv">$ </span>git branch -d branch_name      <span class="c"># delete the local branch</span>
-</code></pre></div>
+<span class="nv">$ </span>git branch -d branch_name      <span class="c"># delete the local branch</span></code></pre></div>
 
 <h3>oh-my-zsh aliases</h3>
 
@@ -68,8 +65,7 @@
 <span class="nv">grhh</span><span class="o">=</span><span class="s1">&#39;git reset HEAD —hard&#39;</span>
 <span class="nv">ggpull</span><span class="o">=</span><span class="s1">&#39;git pull origin $(current_branch)&#39;</span>
 <span class="nv">ggpush</span><span class="o">=</span><span class="s1">&#39;git push origin $(current_branch)&#39;</span>
-<span class="nv">ggpnp</span><span class="o">=</span><span class="s1">&#39;git pull origin $(current_branch) &amp;&amp; git push origin $(current_branch)&#39;</span>
-</code></pre></div>
+<span class="nv">ggpnp</span><span class="o">=</span><span class="s1">&#39;git pull origin $(current_branch) &amp;&amp; git push origin $(current_branch)&#39;</span></code></pre></div>
 
 </div>
 
@@ -84,7 +80,7 @@
       <div class="footer">
         <div class="contact">
 	  <p>
-	    <a href="about.html">Shevaun Coker</a><br />
+	    <a href="/about.html">Shevaun Coker</a><br />
 	    Web Developer<br />
 	  </p>
         </div>
